@@ -266,36 +266,77 @@ go mod download
 
 ## 13. Запуск
 
-Demo без файлов партнёра:
+### Demo без файлов партнёра
 
-```sh
+```bash
 go run ./cmd/app --demo
 go run ./cmd/app --demo --output demo-report.json
 ```
 
-Real strict, один или оба поставщика (замените пути своими):
+### Запуск на реальных данных партнёров
 
-```sh
-go run ./cmd/app --iek-dir "C:/path/to/IEK" --as-of 2026-09-22 --output iek-report.json
-go run ./cmd/app --se-dir "C:/path/to/Systeme electric" --as-of 2026-09-22 --output se-report.json
-go run ./cmd/app --iek-dir "C:/path/to/IEK" --se-dir "C:/path/to/Systeme electric" --as-of 2026-09-22 --months 1 --output partner-report.json
+Укажите реальные пути к каталогам с Excel-файлами IEK и SystemElectric.
+
+#### Linux / WSL
+
+```bash
+go run ./cmd/app \
+  --iek-dir "/path/to/Cases/IEK" \
+  --se-dir "/path/to/Cases/Systeme electric" \
+  --as-of 2026-09-22 \
+  --months 1 \
+  --output partner-report.json
 ```
 
-| Флаг        | Описание                                                        |
-| ----------- | --------------------------------------------------------------- |
-| `--demo`    | пять синтетических сценариев, Excel не нужен                    |
-| `--iek-dir` | папка с шестью XLSX IEK (имена — раздел 10)                     |
-| `--se-dir`  | папка с XLSX SystemElectric (автопоиск по имени)                |
-| `--as-of`   | дата среза, обязательна для real: `ГГГГ-ММ-ДД` или `ДД.ММ.ГГГГ` |
-| `--months`  | горизонт прогноза, 1–24 месяца (по умолчанию 1)                 |
-| `--output`  | путь к JSON-отчёту; без флага — stdout                          |
+### Параметры CLI
 
-Нужен хотя бы один из `--iek-dir` / `--se-dir`. В именах двух файлов IEK стоят
-**два пробела** (`…2 года  ИЭК.xlsx`, `MOQ  ИЭК.xlsx`) — не переименовывайте их.
+| Флаг | Описание |
+|---|---|
+| `--demo` | пять синтетических сценариев, Excel не нужен |
+| `--iek-dir` | папка с шестью XLSX IEK (имена — раздел 10) |
+| `--se-dir` | папка с XLSX SystemElectric |
+| `--as-of` | дата среза, обязательна для real mode |
+| `--months` | горизонт прогноза, 1–24 месяца (по умолчанию 1) |
+| `--output` | путь к JSON-отчёту; без флага — stdout |
 
-`--output` создаёт только новый файл; существующий не перезаписывается.
-Без флага JSON выводится в stdout. Demo нельзя сочетать с real paths, датой или
-изменением горизонта. Каталог назначения должен существовать.
+### Пример проверенного запуска в WSL
+
+```bash
+go run ./cmd/app \
+  --iek-dir "/mnt/c/Users/assem/OneDrive/Desktop/Cases/IEK" \
+  --se-dir "/mnt/c/Users/assem/OneDrive/Desktop/Cases/Systeme electric" \
+  --as-of 2026-09-22 \
+  --months 1 \
+  --output partner-report.json
+```
+
+Проверенный совместный запуск успешно формирует единый `partner-report.json` для двух поставщиков.
+
+> Пути необходимо заменить на расположение файлов на конкретном компьютере.
+>
+> В WSL Windows-диск `C:` доступен через `/mnt/c/`.
+
+### Только IEK
+
+```bash
+go run ./cmd/app \
+  --iek-dir "/path/to/Cases/IEK" \
+  --as-of 2026-09-22 \
+  --output iek-report.json
+```
+
+### Только SystemElectric
+
+```bash
+go run ./cmd/app \
+  --se-dir "/path/to/Cases/Systeme electric" \
+  --as-of 2026-09-22 \
+  --output se-report.json
+```
+
+В именах двух файлов IEK используются два пробела (`…2 года  ИЭК.xlsx`, `MOQ  ИЭК.xlsx`) — не переименовывайте их.
+
+`--output` создаёт новый JSON-отчёт. Без этого флага JSON выводится в stdout.
 
 ## 14. Как проверить решение
 
