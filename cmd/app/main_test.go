@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"Agro-Pulse/internal/demo"
+	"github.com/AlisherBaitas/agro-pulse/internal/demo"
 )
 
 func TestDemoCLIAndIsolation(t *testing.T) {
@@ -20,7 +20,7 @@ func TestDemoCLIAndIsolation(t *testing.T) {
 	if report.Source != "synthetic_demo" || len(report.Scenarios) != 5 {
 		t.Fatal("wrong demo output")
 	}
-	for _, args := range [][]string{{"--demo", "--iek-dir", "anything"}, {"--demo", "--as-of", "2026-01-01"}, {"--demo", "--months", "1"}} {
+	for _, args := range [][]string{{"--demo", "--iek-dir", "anything"}, {"--demo", "--se-dir", "anything"}, {"--demo", "--as-of", "2026-01-01"}, {"--demo", "--months", "1"}} {
 		if err := run(args, &stdout, &stderr); err == nil {
 			t.Fatal("mixed CLI arguments accepted", args)
 		}

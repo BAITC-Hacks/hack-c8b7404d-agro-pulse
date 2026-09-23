@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"Agro-Pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 	"github.com/xuri/excelize/v2"
 )
 

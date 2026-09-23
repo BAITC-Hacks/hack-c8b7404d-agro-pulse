@@ -1,8 +1,8 @@
 package explain
 
 import (
-	"Agro-Pulse/internal/model"
 	"fmt"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 	"strings"
 )
 

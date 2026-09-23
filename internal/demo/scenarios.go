@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"Agro-Pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 )
 
 const Source = "synthetic_demo"
@@ -36,6 +36,7 @@ func Fixtures() (model.Dataset, model.Config, map[string]string) {
 		p.MOQ = model.MOQ{Kind: "multiple", Quantity: number(12, sku+"/moq")}
 		if scenario == "GROWING DEMAND" {
 			p.MOQ = model.MOQ{Kind: "minimum", Quantity: number(400, sku+"/moq")}
+			season[0] = number(2, sku+"/seasonality/1")
 		}
 		if scenario == "INCOMING GOODS" {
 			p.Incoming[0].Quantity = number(200, sku+"/incoming")
@@ -47,7 +48,7 @@ func Fixtures() (model.Dataset, model.Config, map[string]string) {
 			month := time.Date(2025, time.Month(m+1), 1, 0, 0, 0, 0, time.UTC)
 			quantity := 310.0
 			if scenario == "GROWING DEMAND" {
-				quantity = 120 + 20*float64(m)
+				quantity = (120 + 20*float64(m)) * season[m].Value
 			}
 			if scenario == "STOCKOUT" && m == 11 {
 				quantity = 0

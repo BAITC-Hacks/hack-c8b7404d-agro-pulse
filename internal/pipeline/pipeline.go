@@ -4,10 +4,10 @@ package pipeline
 import (
 	"sort"
 
-	"Agro-Pulse/internal/analytics"
-	"Agro-Pulse/internal/calculator"
-	"Agro-Pulse/internal/explain"
-	"Agro-Pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/analytics"
+	"github.com/AlisherBaitas/agro-pulse/internal/calculator"
+	"github.com/AlisherBaitas/agro-pulse/internal/explain"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 )
 
 var Assumptions = []string{

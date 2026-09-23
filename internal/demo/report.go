@@ -3,7 +3,7 @@ package demo
 import (
 	"fmt"
 
-	"Agro-Pulse/internal/pipeline"
+	"github.com/AlisherBaitas/agro-pulse/internal/pipeline"
 )
 
 // Every exposed scalar (including dates, rules and metadata) has its own source.
@@ -30,7 +30,7 @@ func val(v any, from ...string) Value { return Value{Value: v, Source: Source, D
 var Assumptions = []string{
 	"All inputs are synthetic_demo, not supplied by a partner; supplier DEMO_SUPPLIER; units шт",
 	"As-of 2026-01-01; one calendar month; exact same-date stock snapshot; explicit zero incoming where absent",
-	"Each synthetic SKU has an explicitly flat seasonal profile (12 coefficients equal to 1)",
+	"Explicit synthetic seasonal profiles: GROWING DEMAND has January coefficient 2, other months 1; other scenarios are flat",
 	"MOQ is multiple of 12, except GROWING DEMAND with minimum 400; discrete quantities round up",
 	"IQR outer fence Q3+3*IQR, at least four positive observations; Theil-Sen trend; safety stock 0",
 	"Urgency is a demo-only rule: uniform within-month consumption; receipt available at beginning of due date",

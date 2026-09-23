@@ -87,12 +87,14 @@ type MonthlyValue struct {
 
 // StockSnapshot — остаток на конкретную дату (НЕ исторический помесячный).
 type StockSnapshot struct {
-	AsOf       time.Time          `json:"as_of"`
-	Source     string             `json:"source"`
-	Total      float64            `json:"total"`     // «Остаток»
-	Reserved   float64            `json:"reserved"`  // «Зарезервировано»
-	Free       float64            `json:"free"`      // «Свободный остаток»
-	ByLocation map[string]float64 `json:"by_location,omitempty"` // прочие склады как есть, без суммирования
+	TotalPresent bool               `json:"total_present"`
+	FreePresent  bool               `json:"free_present"`
+	AsOf         time.Time          `json:"as_of"`
+	Source       string             `json:"source"`
+	Total        float64            `json:"total"`                 // «Остаток»
+	Reserved     float64            `json:"reserved"`              // «Зарезервировано»
+	Free         float64            `json:"free"`                  // «Свободный остаток»
+	ByLocation   map[string]float64 `json:"by_location,omitempty"` // прочие склады как есть, без суммирования
 }
 
 // IncomingShipment — товар в пути.
@@ -117,9 +119,9 @@ type SalesTransaction struct {
 	Row       int       `json:"row"`
 }
 
-// Product — справочная часть SKU.
-type Product struct {
-	SKU             string   `json:"sku"`              // код 1С как есть (с ведущими нулями и "_")
+// SupplierProduct — справочная часть SKU.
+type SupplierProduct struct {
+	SKU             string   `json:"sku"` // код 1С как есть (с ведущими нулями и "_")
 	Name            string   `json:"name"`
 	SupplierArticle string   `json:"supplier_article"` // артикул поставщика
 	Supplier        string   `json:"supplier"`
@@ -131,26 +133,26 @@ type Product struct {
 
 // SKURecord — всё, что известно о SKU после нормализации.
 type SKURecord struct {
-	Product
-	MonthlySales []MonthlyValue      `json:"monthly_sales"` // основной ряд продаж
-	MonthlyStock []MonthlyValue      `json:"monthly_stock"` // исторические остатки (НЕ текущие)
-	Transactions []SalesTransaction  `json:"transactions,omitempty"`
-	CurrentStock *StockSnapshot      `json:"current_stock,omitempty"` // nil = NOT PROVIDED
-	Incoming     []IncomingShipment  `json:"incoming,omitempty"`
-	LeadTimeDays *int                `json:"lead_time_days,omitempty"` // nil = NOT PROVIDED
-	Sources      []string            `json:"sources"`
-	Status       Severity            `json:"status"`
-	Issues       []DataIssue         `json:"issues,omitempty"`
+	SupplierProduct
+	MonthlySales []MonthlyValue     `json:"monthly_sales"` // основной ряд продаж
+	MonthlyStock []MonthlyValue     `json:"monthly_stock"` // исторические остатки (НЕ текущие)
+	Transactions []SalesTransaction `json:"transactions,omitempty"`
+	CurrentStock *StockSnapshot     `json:"current_stock,omitempty"` // nil = NOT PROVIDED
+	Incoming     []IncomingShipment `json:"incoming,omitempty"`
+	LeadTimeDays *int               `json:"lead_time_days,omitempty"` // nil = NOT PROVIDED
+	Sources      []string           `json:"sources"`
+	Status       Severity           `json:"status"`
+	Issues       []DataIssue        `json:"issues,omitempty"`
 }
 
 // SeasonalityProfile — коэффициенты сезонности.
 type SeasonalityProfile struct {
-	Scope        string                        `json:"scope"`      // напр. "company_total"
-	ValueUnit    string                        `json:"value_unit"` // единица базовых сумм
-	Coefficients map[time.Month]float64        `json:"coefficients"`
+	Scope        string                         `json:"scope"`      // напр. "company_total"
+	ValueUnit    string                         `json:"value_unit"` // единица базовых сумм
+	Coefficients map[time.Month]float64         `json:"coefficients"`
 	ByYear       map[int]map[time.Month]float64 `json:"by_year"`
-	Adjustment   *float64                      `json:"adjustment,omitempty"`
-	Source       string                        `json:"source"`
+	Adjustment   *float64                       `json:"adjustment,omitempty"`
+	Source       string                         `json:"source"`
 }
 
 // SupplierDataset — результат загрузки одного поставщика.

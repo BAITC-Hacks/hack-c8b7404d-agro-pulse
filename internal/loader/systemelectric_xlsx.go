@@ -11,7 +11,7 @@ import (
 
 	"github.com/xuri/excelize/v2"
 
-	"hackalem/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 )
 
 // Низкоуровневые помощники чтения Excel для адаптера SystemElectric.

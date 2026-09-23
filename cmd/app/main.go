@@ -7,17 +7,18 @@ import (
 	"io"
 	"os"
 
-	"Agro-Pulse/internal/demo"
-	"Agro-Pulse/internal/loader"
-	"Agro-Pulse/internal/model"
-	"Agro-Pulse/internal/normalize"
-	"Agro-Pulse/internal/pipeline"
+	"github.com/AlisherBaitas/agro-pulse/internal/demo"
+	"github.com/AlisherBaitas/agro-pulse/internal/loader"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/normalize"
+	"github.com/AlisherBaitas/agro-pulse/internal/pipeline"
 )
 
 func run(args []string, stdout, stderr io.Writer) error {
 	fs := flag.NewFlagSet("agropulse", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	iek := fs.String("iek-dir", "", "directory with the six original IEK XLSX files")
+	se := fs.String("se-dir", "", "directory with the original SystemElectric XLSX files")
 	asof := fs.String("as-of", "", "required data snapshot date YYYY-MM-DD")
 	months := fs.Int("months", 1, "MVP ASSUMPTION: forecast horizon in calendar months (1..24)")
 	output := fs.String("output", "", "save the JSON report to a new file (existing files are never overwritten)")
@@ -67,15 +68,25 @@ func run(args []string, stdout, stderr io.Writer) error {
 	if *months < 1 || *months > 24 {
 		return fmt.Errorf("months must be 1..24")
 	}
-	if *iek == "" {
-		return fmt.Errorf("--iek-dir is required")
+	if *iek == "" && *se == "" {
+		return fmt.Errorf("--iek-dir or --se-dir is required")
 	}
 	cfg := model.Config{AsOf: d, Months: *months}
-	dataset, err := loader.LoadIEK(*iek)
-	if err != nil {
-		return err
+	report := model.Report{MethodVersion: "mvp-3-strict", Config: cfg, Assumptions: pipeline.Assumptions}
+	if *iek != "" {
+		dataset, err := loader.LoadIEK(*iek)
+		if err != nil {
+			return err
+		}
+		report.Suppliers = append(report.Suppliers, pipeline.Run(dataset, cfg))
 	}
-	report := model.Report{MethodVersion: "mvp-2-strict-iek", Config: cfg, Assumptions: pipeline.Assumptions, Suppliers: []model.SupplierReport{pipeline.Run(dataset, cfg)}}
+	if *se != "" {
+		dataset, err := loader.LoadSystemElectric(loader.SEConfig{Dir: *se, AsOf: d})
+		if err != nil {
+			return err
+		}
+		report.Suppliers = append(report.Suppliers, pipeline.Run(loader.SystemElectricDataset(dataset), cfg))
+	}
 	if *output != "" {
 		f, err := os.OpenFile(*output, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
 		if err != nil {
@@ -90,7 +101,7 @@ func run(args []string, stdout, stderr io.Writer) error {
 		if closeErr != nil {
 			return closeErr
 		}
-		fmt.Fprintf(stderr, "IEK report: %s; SKU=%d; matched_all_sources=%d\n", *output, len(dataset.Products), len(dataset.Quality.MatchedAllSources))
+		fmt.Fprintf(stderr, "Report: %s; suppliers=%d\n", *output, len(report.Suppliers))
 		return nil
 	}
 	enc := json.NewEncoder(stdout)

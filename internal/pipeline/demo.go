@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"Agro-Pulse/internal/model"
-	"Agro-Pulse/internal/normalize"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/normalize"
 )
 
 // RunDemo is a separate, provenance-checked entrance to the SAME run function.

@@ -1,6 +1,6 @@
 package loader
 
-import "Agro-Pulse/internal/model"
+import "github.com/AlisherBaitas/agro-pulse/internal/model"
 
 // LoadIEK uses the inspected September 2026 workbook layout.
 func LoadIEK(dir string) (model.Dataset, error) {

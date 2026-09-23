@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"hackalem/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 )
 
 func TestParseRuMonthHeader(t *testing.T) {
@@ -100,7 +100,9 @@ func TestHeaderAndFileDates(t *testing.T) {
 }
 
 // Интеграционный тест на реальных файлах:
-//   SE_DATA_DIR="/path/to/Systeme electric" go test ./internal/loader -run TestLoadSystemElectricReal -v
+//
+//	SE_DATA_DIR="/path/to/Systeme electric" go test ./internal/loader -run TestLoadSystemElectricReal -v
+//
 // Ожидаемые числа получены при аудите файлов (см. docs/DATA_AUDIT_SYSTEMELECTRIC.md).
 func TestLoadSystemElectricReal(t *testing.T) {
 	dir := os.Getenv("SE_DATA_DIR")

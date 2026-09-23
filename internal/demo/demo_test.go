@@ -2,16 +2,49 @@ package demo
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
-	"Agro-Pulse/internal/loader"
-	"Agro-Pulse/internal/model"
-	"Agro-Pulse/internal/pipeline"
+	"github.com/AlisherBaitas/agro-pulse/internal/loader"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/pipeline"
 )
+
+func TestSeasonalGrowthAndExplanation(t *testing.T) {
+	d, c, _ := Fixtures()
+	r := result(t, d, c, "DEMO-03")
+	if r.Forecast.TrendPerMonth <= 0 || r.Forecast.SeasonalityImpact <= 0 || math.Abs(r.Forecast.Quantity-720) > 1e-8 {
+		t.Fatal("seasonal growth not reflected", r.Forecast)
+	}
+	p := d.Products["DEMO-03"]
+	for i := range *p.Seasonality {
+		p.Seasonality[i].Value = 1
+	}
+	flat := result(t, d, c, "DEMO-03")
+	if r.Forecast.Quantity <= flat.Forecast.Quantity {
+		t.Fatal("seasonality had no effect")
+	}
+	for _, want := range []string{
+		fmt.Sprintf("прогноз %.3f", r.Forecast.Quantity),
+		fmt.Sprintf("остаток %.3f", r.CurrentStock.Quantity.Value),
+		fmt.Sprintf("в пути %.3f", *r.Incoming),
+		fmt.Sprintf("заказ %.3f", *r.Quantity),
+		fmt.Sprintf("Сезонное влияние %.3f", r.Forecast.SeasonalityImpact),
+		fmt.Sprintf("тренд %.3f", r.Forecast.TrendPerMonth),
+		fmt.Sprintf("lost demand %.3f", r.Forecast.StockoutAdjustment),
+		fmt.Sprintf("выбросов %d", len(r.Forecast.Outliers)),
+		fmt.Sprintf("MOQ %.3f", r.MOQ.Quantity.Value),
+	} {
+		if !strings.Contains(r.Explanation, want) {
+			t.Fatalf("explanation missing %q: %s", want, r.Explanation)
+		}
+	}
+}
 
 func result(t *testing.T, d model.Dataset, c model.Config, sku string) model.Recommendation {
 	t.Helper()
@@ -33,7 +66,7 @@ func result(t *testing.T, d model.Dataset, c model.Config, sku string) model.Rec
 
 func TestDemoScenariosAndMOQ(t *testing.T) {
 	d, c, _ := Fixtures()
-	expected := map[string]float64{"DEMO-01": 276, "DEMO-02": 276, "DEMO-03": 400, "DEMO-04": 72, "DEMO-05": 312}
+	expected := map[string]float64{"DEMO-01": 276, "DEMO-02": 276, "DEMO-03": 675, "DEMO-04": 72, "DEMO-05": 312}
 	for sku, want := range expected {
 		r := result(t, d, c, sku)
 		if *r.Quantity != want || r.Status != "demo_recommendation" || r.Urgency == "unknown" {
@@ -62,7 +95,7 @@ func TestDemoStockAndIncomingMonotonicNonnegative(t *testing.T) {
 					p.Incoming[0].Quantity.Value = n
 				}
 				r := result(t, d, c, sku)
-				if *r.Quantity < 0 || *r.Quantity > previous {
+				if *r.RawOrder < 0 || *r.Quantity < 0 || *r.Quantity > previous {
 					t.Fatalf("%s %s=%v increased order to %v", sku, field, n, *r.Quantity)
 				}
 				previous = *r.Quantity

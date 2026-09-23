@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"Agro-Pulse/internal/model"
-	"Agro-Pulse/internal/normalize"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/normalize"
 	"github.com/xuri/excelize/v2"
 )
 

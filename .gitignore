@@ -1,5 +1,6 @@
 /outputs/
 /app.exe
 /app
+/.gocache/
 /data/**/*.xlsx
 /data/**/*.xls

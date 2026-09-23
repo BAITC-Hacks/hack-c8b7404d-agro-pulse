@@ -7,10 +7,10 @@ import (
 	"io"
 	"os"
 
-	"Agro-Pulse/internal/loader"
-	"Agro-Pulse/internal/model"
-	"Agro-Pulse/internal/normalize"
-	"Agro-Pulse/internal/pipeline"
+	"github.com/AlisherBaitas/agro-pulse/internal/loader"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/normalize"
+	"github.com/AlisherBaitas/agro-pulse/internal/pipeline"
 )
 
 func run(args []string, stdout, stderr io.Writer) error {

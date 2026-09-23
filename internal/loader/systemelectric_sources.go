@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"hackalem/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 )
 
 // Парсеры шести файлов SystemElectric. Каждый парсер:
@@ -487,6 +487,7 @@ func parseSETransit(path string, sink *seIssueSink) (*seTransitData, error) {
 		free, okFree := num(cFree, "Свободный остаток")
 		if okTotal || okFree {
 			snap := &model.StockSnapshot{
+				TotalPresent: okTotal, FreePresent: okFree,
 				AsOf: out.asOf, Source: seSrcTransit,
 				Total: total, Reserved: reserved, Free: free,
 				ByLocation: map[string]float64{},

@@ -1,7 +1,7 @@
 package explain
 
 import (
-	"Agro-Pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 	"strings"
 	"testing"
 )

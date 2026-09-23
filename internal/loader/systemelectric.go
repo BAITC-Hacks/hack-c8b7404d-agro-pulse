@@ -28,7 +28,7 @@ import (
 	"strings"
 	"time"
 
-	"hackalem/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 )
 
 const SupplierSystemElectric = "SystemElectric"
@@ -305,7 +305,7 @@ func assembleSE(
 			txs = tx.bySKU[sku]
 		}
 
-		rec := &model.SKURecord{Product: model.Product{SKU: sku, Supplier: SupplierSystemElectric}}
+		rec := &model.SKURecord{SupplierProduct: model.SupplierProduct{SKU: sku, Supplier: SupplierSystemElectric}}
 		var issues []model.DataIssue
 		add := func(sev model.Severity, src, code, msg, value string) {
 			issues = append(issues, model.DataIssue{

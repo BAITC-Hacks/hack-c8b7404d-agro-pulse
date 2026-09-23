@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"Agro-Pulse/internal/loader"
-	"Agro-Pulse/internal/model"
+	"github.com/AlisherBaitas/agro-pulse/internal/loader"
+	"github.com/AlisherBaitas/agro-pulse/internal/model"
 )
 
 // Opt-in: commercial workbooks are never required by the portable unit suite.
