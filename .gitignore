@@ -1,0 +1,5 @@
+/outputs/
+/app.exe
+/app
+/data/**/*.xlsx
+/data/**/*.xls
